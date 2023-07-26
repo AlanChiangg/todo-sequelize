@@ -3,6 +3,7 @@ const router = express.Router()
 const db = require('../../models')
 const User = db.User
 const passport = require('passport')
+const bcrypt = require('bcryptjs')
 
 router.get('/login', (req, res) => {
   res.render('login')
@@ -20,6 +21,7 @@ router.get('/register', (req, res) => {
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
   const errors = []
+
   if (!name, !email, !password, !confirmPassword) {
     errors.push({ message: '所有欄位都是必填。' })
   }
@@ -35,6 +37,7 @@ router.post('/register', (req, res) => {
       confirmPassword
     })
   }
+
   User.findOne({ where: { email } }).then(user => {
     if (user) {
       errors.push({ message: '這個 Email 已經註冊過了。' })
@@ -46,6 +49,7 @@ router.post('/register', (req, res) => {
         confirmPassword
       })
     }
+
     return bcrypt
       .genSalt(10)
       .then(salt => bcrypt.hash(password, salt))
