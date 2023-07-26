@@ -5,8 +5,12 @@ const methodOverride = require('method-override')
 const flash = require('connect-flash')
 const routes = require('./routes')
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 const usePassport = require('./config/passport')
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 app.engine('hbs', exphbs.engine({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
@@ -16,7 +20,7 @@ app.use(methodOverride('_method'))
 app.use(flash())
 
 app.use(session({
-  secret: 'ThisIsMySecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
